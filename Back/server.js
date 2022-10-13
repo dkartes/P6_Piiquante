@@ -1,6 +1,7 @@
 const express = require("express");
 // on appel notre .env qui contient nos variables d'environnement
 require("dotenv").config({ path: "./config/.env" });
+require("./config/db");
 const app = express();
 
 app.listen(process.env.PORT, () => {
