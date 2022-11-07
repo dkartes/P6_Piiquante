@@ -1,12 +1,13 @@
 const mongoose = require("mongoose");
-const { isEmail } = require("validator");
+const uniqueValidator = require("mongoose-unique-validator");
 const bcrypt = require("bcrypt");
 
-const userSchema = new mongoose.Schema({
+//Création du schéma utilisateur
+const userSchema = mongoose.Schema({
   email: {
     type: String,
     required: true,
-    validate: [isEmail],
+    unique: true,
     lowercase: true,
   },
   password: {
@@ -14,6 +15,9 @@ const userSchema = new mongoose.Schema({
     required: true,
   },
 });
+
+//on applique le validator au schéma avant d'en faire un model
+userSchema.plugin(uniqueValidator);
 
 // play function before save into display:"block"
 userSchema.pre("save", async function (next) {
@@ -23,5 +27,4 @@ userSchema.pre("save", async function (next) {
 });
 
 /* On export le schéma */
-const userModel = mongoose.model("user", userSchema);
-module.exports = userModel;
+module.exports = mongoose.model("user", userSchema);

@@ -1,6 +1,14 @@
-const router = require("express").Router();
-const authController = require("../controllers/auth.controller");
+const express = require("express");
+const router = express.Router();
+const userController = require("../controllers/user.controller");
 
-router.post("/signup", authController.signUp);
+//const bcrypt = require("bcrypt");
+//const UserModel = require("../models/user.model");
+//const ObjectID = require("mongoose").Types.ObjectId;
+
+// authentification
+router.post("/signup", userController.signUp);
+// login
+router.post("/login", userController.login);
 
 module.exports = router;
