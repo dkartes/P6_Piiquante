@@ -1,10 +1,8 @@
 const bcrypt = require("bcrypt");
 const UserModel = require("../models/user.model");
+require("dotenv").config({ path: "./config/.env" });
 const jwt = require("jsonwebtoken");
-require("dotenv").config();
 const JWT_SECRET_TOKEN = process.env.JWT_SECRET_TOKEN;
-
-// COURS OC
 
 exports.signUp = (req, res, next) => {
   bcrypt
@@ -30,49 +28,20 @@ exports.login = (req, res, next) => {
       }
       bcrypt
         .compare(req.body.password, user.password)
-        .then(valid => {
+        .then(async valid => {
           if (!valid) {
             return res.status(401).json({ error: "Mot de passe incorrect" });
           }
+          const token = await jwt.sign({ userId: user._id }, JWT_SECRET_TOKEN, {
+            expiresIn: 60 * 60 * 24,
+          });
+          console.log(token);
           res.status(200).json({
             userId: user._id,
-            token: jwt.sign({ userId: user._id }, JWT_SECRET_TOKEN, {
-              expiresIn: "24h",
-              message: "Vous etes connecté",
-            }),
+            token: token,
           });
         })
-        .catch(err => res.status(500).json({ err }));
+        .catch(err => res.status(500).json({ err: "erreur" }));
     })
-    .catch(err => res.status(500).json({ err }));
+    .catch(err => res.status(500).json({ err: "je capte aps" }));
 };
-
-/* From Scratch 
-
-/*
-
-exports.signUp = async (req, res) => {
-  const { email, password } = req.body;
-
-  try {
-    const user = await UserModel.create({ email, password });
-    res.status(201).json({ message: "Utilisateur crée !" });
-  } catch (err) {
-    res.status(200).send({ err });
-  }
-};
-
-exports.login = async (req, res) => {
-  const { email, password } = req.body;
-
-  try {
-    const user = await UserModel.login(email, password);
-    const token = createToken(user._id);
-    res.cookie("jwt", token, { httpOnly: true, maxAge });
-    res.status(200).json({ user: user._id });
-  } catch (err) {
-    res.status(500).json(err);
-  }
-};
-
-*/
