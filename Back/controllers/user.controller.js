@@ -24,24 +24,27 @@ exports.login = (req, res, next) => {
   UserModel.findOne({ email: req.body.email })
     .then(user => {
       if (!user) {
-        return res.status(401).json({ error: "Utilisateur non trouvé" });
+        return res
+          .status(401)
+          .json({ error: "Utilisateur non trouvé/Mot de passe incorrecte" });
       }
       bcrypt
         .compare(req.body.password, user.password)
         .then(async valid => {
           if (!valid) {
-            return res.status(401).json({ error: "Mot de passe incorrect" });
+            return res.status(401).json({
+              error: "Utilisateur non trouvé/Mot de passe incorrecte",
+            });
+          } else {
+            res.status(200).json({
+              userId: user._id,
+              token: jwt.sign({ userId: user._id }, JWT_SECRET_TOKEN, {
+                expiresIn: 60 * 60 * 24,
+              }),
+            });
           }
-          const token = await jwt.sign({ userId: user._id }, JWT_SECRET_TOKEN, {
-            expiresIn: 60 * 60 * 24,
-          });
-          console.log(token);
-          res.status(200).json({
-            userId: user._id,
-            token: token,
-          });
         })
-        .catch(err => res.status(500).json({ err: "erreur" }));
+        .catch(err => res.status(500).json({ err }));
     })
-    .catch(err => res.status(500).json({ err: "je capte aps" }));
+    .catch(err => res.status(500).json({ err }));
 };
