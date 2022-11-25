@@ -46,3 +46,6 @@ const sauceSchema = mongoose.Schema({
     type: ["String<userId>"],
   },
 });
+
+const Sauce = mongoose.model("Sauce", sauceSchema);
+module.exports = Sauce;
