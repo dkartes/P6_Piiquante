@@ -1,5 +1,5 @@
 const multer = require("multer");
-
+//Création d'une constante dictionnaire de type MIME pour résoudre l'extension de fichier appropriée
 const MIME_TYPES = {
   "image/jpg": "jpg",
   "image/jpeg": "jpg",
